@@ -267,6 +267,54 @@
       color: #f8512b;
     }
 
+    .attachment-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #10b981;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+    }
+
+    .download-btn:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    .view-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .view-btn:hover {
+      background: #e2e8f0;
+      color: #f8512b;
+    }
+
     .attachment-image-preview {
       display: block;
       margin-top: 10px;
@@ -412,20 +460,26 @@
           let attachmentHtml = '';
           if (submission.attachment && submission.attachment.url) {
             const fileUrl = `${BACKEND_URL}${submission.attachment.url}`;
+            const downloadUrl = `${BACKEND_URL}/api/download/${encodeURIComponent(submission.attachment.filename)}?name=${encodeURIComponent(submission.attachment.originalName || submission.attachment.filename)}`;
             const isImage = submission.attachment.mimeType && submission.attachment.mimeType.startsWith('image/');
             const formattedSize = formatFileSize(submission.attachment.size);
 
             attachmentHtml = `
               <div class="attachment-section">
-                <div class="attachment-title">Attached File:</div>
-                <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="attachment-link">
-                  <span>${isImage ? '🖼️' : '📄'}</span>
-                  <span>${escapeHtml(submission.attachment.originalName || 'Download File')}</span>
-                  ${formattedSize ? `<span style="color:#64748b; font-size:12px;">(${formattedSize})</span>` : ''}
-                </a>
+                <div class="attachment-title">📎 Attached File: <strong>${escapeHtml(submission.attachment.originalName || 'File')}</strong> ${formattedSize ? `<span style="color:#64748b; font-size:12px;">(${formattedSize})</span>` : ''}</div>
+                
+                <div class="attachment-actions">
+                  <a href="${downloadUrl}" download="${escapeHtml(submission.attachment.originalName || 'file')}" class="download-btn">
+                    <span>⬇️ Download File</span>
+                  </a>
+                  <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="view-btn">
+                    <span>👁️ Open / Preview</span>
+                  </a>
+                </div>
+
                 ${isImage ? `
                   <div>
-                    <a href="${fileUrl}" target="_blank" rel="noopener noreferrer">
+                    <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" title="Click to view full image">
                       <img src="${fileUrl}" alt="Attachment preview" class="attachment-image-preview" loading="lazy">
                     </a>
                   </div>
