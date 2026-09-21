@@ -459,8 +459,11 @@
         .map(submission => {
           let attachmentHtml = '';
           if (submission.attachment && submission.attachment.url) {
-            const fileUrl = `${BACKEND_URL}${submission.attachment.url}`;
-            const downloadUrl = `${BACKEND_URL}/api/download/${encodeURIComponent(submission.attachment.filename)}?name=${encodeURIComponent(submission.attachment.originalName || submission.attachment.filename)}`;
+            const fileUrl = submission.attachment.url.startsWith('http') 
+              ? submission.attachment.url 
+              : `${BACKEND_URL}${submission.attachment.url}`;
+            const fileTarget = submission.attachment.fileId || encodeURIComponent(submission.attachment.filename);
+            const downloadUrl = `${BACKEND_URL}/api/download/${fileTarget}?name=${encodeURIComponent(submission.attachment.originalName || submission.attachment.filename || 'file')}`;
             const isImage = submission.attachment.mimeType && submission.attachment.mimeType.startsWith('image/');
             const formattedSize = formatFileSize(submission.attachment.size);
 
